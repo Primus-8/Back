@@ -1,17 +1,16 @@
-import { utapi } from 'uploadthing/server';
+import { createUploadthing, type FileRouter } from "uploadthing/next";
+import { uploadthingMiddleware } from "uploadthing/next/middleware";
 
-export async function POST(req) {
-  const data = await req.formData();
-  const file = data.get('file');
+const f = createUploadthing();
 
-  if (!file) {
-    return new Response(JSON.stringify({ error: 'No file uploaded' }), {
-      status: 400,
-    });
-  }
+export const ourFileRouter = {
+  imageUploader: f({ image: { maxFileSize: "4MB" } }).onUploadComplete(({ file }) => {
+    console.log("File uploaded:", file.url);
+  }),
+} satisfies FileRouter;
 
-  const upload = await utapi.uploadFiles(file);
-  return new Response(JSON.stringify({ url: upload.url }), {
-    headers: { 'Content-Type': 'application/json' },
-  });
-}
+export type OurFileRouter = typeof ourFileRouter;
+
+export const { POST } = uploadthingMiddleware({
+  router: ourFileRouter,
+});
