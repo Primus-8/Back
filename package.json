@@ -1,0 +1,7 @@
+{
+  "name": "image-backend",
+  "type": "module",
+  "dependencies": {
+    "uploadthing": "^5.2.0"
+  }
+}
