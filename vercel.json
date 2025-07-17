@@ -1,9 +1,4 @@
+// vercel.json
 {
-  "routes": [
-    {
-      "src": "/api/upload",
-      "methods": ["POST"],
-      "dest": "/api/upload.js"
-    }
-  ]
+  "rootDirectory": "Back"
 }
