@@ -1,16 +1,18 @@
-import { utapi } from 'uploadthing/server';
-export async function POST(req) {
-  const data = await req.formData();
-  const file = data.get('file');
+// app/api/upload/route.js
 
-  if (!file) {
-    return new Response(JSON.stringify({ error: 'No file uploaded' }), {
-      status: 400,
-    });
-  }
+import { createUploadthing, type FileRouter } from "uploadthing/next";
+import { createNextRouteHandler } from "uploadthing/next";
 
-  const upload = await utapi.uploadFiles(file);
-  return new Response(JSON.stringify({ url: upload.url }), {
-    headers: { 'Content-Type': 'application/json' },
-  });
-}
+const f = createUploadthing();
+
+const ourFileRouter = {
+  imageUploader: f({ image: { maxFileSize: "4MB" } })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Upload complete: ", file.url);
+    }),
+};
+
+// This exports the route handler functions GET and POST
+export const { GET, POST } = createNextRouteHandler({
+  router: ourFileRouter,
+});
